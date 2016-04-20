@@ -16,4 +16,7 @@ chmod +x ~/devstack/local.sh
 # make networking work for vms
 sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 
+# deploy the stack
+cd ~/devstack
+# sudo time ./stack.sh
 
