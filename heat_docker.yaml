@@ -4,7 +4,7 @@ parameters:
   image:
     type: string
     description: Image used for servers
-    default: docker-prebake-0.1
+    default: docker-prebake-0.2
   key:
     type: string
     description: SSH key to connect to the servers

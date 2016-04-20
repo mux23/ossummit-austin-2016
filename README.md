@@ -7,5 +7,6 @@ This stuff uses an M4.xlarge instance on AWS, and it's extremely important that 
 Things to know:
  - this relies on my own public key, hosted on riotnrrd.com
  - this relies on a custom-baked QCOW2 image, also hosted on riotnrrd.com
+ - that pre-baked image has Docker installed and Postgresql pre-pulled
  - this probably just straight-up won't work for you.
 
