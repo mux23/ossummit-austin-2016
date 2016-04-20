@@ -4,7 +4,6 @@
 cd ~
 sudo apt-get update
 sudo apt-get -y upgrade
-sudo apt-get install git
 sudo git clone https://git.openstack.org/openstack-dev/devstack
 sudo ./devstack/tools/create-stack-user.sh
 
