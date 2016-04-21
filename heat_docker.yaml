@@ -17,8 +17,8 @@ resources:
   docker_asg:
     type: OS::Heat::AutoScalingGroup
     properties:
-      min_size: 1
-      max_size: 2
+      min_size: 2
+      max_size: 3
       resource: 
         type: OS::Nova::Server
         properties:
@@ -37,6 +37,7 @@ resources:
                 /usr/bin/curl -ssL -o /tmp/install-rexray.sh https://dl.bintray.com/emccode/rexray/install
                 chmod +x /tmp/install-rexray.sh
                 /tmp/install-rexray.sh
+                rm -f /etc/rexray/config.yml
                 cat << EOF >> /etc/rexray/config.yml
                 rexray:
                   storageDrivers:
@@ -48,10 +49,11 @@ resources:
                   authUrl: http://172.24.4.1:35357/v2.0
                   username: admin
                   password: foopassword
-                  tenantName: admin
+                  tenantName: alt_demo
                   regionName: RegionOne
                 EOF
                 chgrp docker /etc/rexray/config.yml
+                rexray start
               params:
                 dummy: ""
   docker_secgroup:
