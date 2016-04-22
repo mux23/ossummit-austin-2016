@@ -14,6 +14,7 @@ Things to know:
  - this probably just straight-up won't work for you. 
    - or maybe it will! who knows!
    - ...but if it doesn't, I warned you.
+ - pretty sure the local.sh is broken - it works if you launch it manually from the 'stack' user, but not from `./stack.sh`. *shrug*.
 
 How to use:
  - boot an m4.xlarge AWS instance with Ubuntu 14.04 LTS
