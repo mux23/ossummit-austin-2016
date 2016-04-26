@@ -1,0 +1,124 @@
+heat_template_version: 2015-04-30
+description: Two-node Docker with REX-Ray
+parameters:
+  image:
+    type: string
+    description: Image used for servers
+    default: docker-prebake-0.2
+  key:
+    type: string
+    description: SSH key to connect to the servers
+    default: drew_keypair
+  docker_flavor:
+    type: string
+    description: flavor used by the docker servers
+    default: m1.medium
+resources:
+  docker-one:
+    type: OS::Nova::Server
+    properties:
+      flavor: {get_param: docker_flavor}
+      image: {get_param: image}
+      key_name: {get_param: key}
+      name: docker-one
+      networks: [{network: {get_resource: docker_network} }]
+      security_groups: 
+        - {get_resource: docker_secgroup}
+      user_data_format: RAW
+      user_data:
+            str_replace:
+              template: |
+                #!/bin/bash -v
+                /usr/bin/curl -ssL -o /tmp/install-rexray.sh https://dl.bintray.com/emccode/rexray/install
+                chmod +x /tmp/install-rexray.sh
+                /tmp/install-rexray.sh
+                rm -f /etc/rexray/config.yml
+                cat << EOF >> /etc/rexray/config.yml
+                rexray:
+                  storageDrivers:
+                    - openstack
+                  volume:
+                    mount:
+                      preempt: true
+                openstack:
+                  authUrl: http://172.24.4.1:35357/v2.0
+                  username: admin
+                  password: foopassword
+                  tenantName: alt_demo
+                  regionName: RegionOne
+                EOF
+                chgrp docker /etc/rexray/config.yml
+                rexray start
+              params:
+                dummy: ""
+  docker-two:
+    type: OS::Nova::Server
+    properties:
+      flavor: {get_param: docker_flavor}
+      image: {get_param: image}
+      key_name: {get_param: key}
+      name: docker-two
+      networks: [{network: {get_resource: docker_network} }]
+      security_groups: 
+        - {get_resource: docker_secgroup}
+      user_data_format: RAW
+      user_data:
+            str_replace:
+              template: |
+                #!/bin/bash -v
+                /usr/bin/curl -ssL -o /tmp/install-rexray.sh https://dl.bintray.com/emccode/rexray/install
+                chmod +x /tmp/install-rexray.sh
+                /tmp/install-rexray.sh
+                rm -f /etc/rexray/config.yml
+                cat << EOF >> /etc/rexray/config.yml
+                rexray:
+                  storageDrivers:
+                    - openstack
+                  volume:
+                    mount:
+                      preempt: true
+                openstack:
+                  authUrl: http://172.24.4.1:35357/v2.0
+                  username: admin
+                  password: foopassword
+                  tenantName: alt_demo
+                  regionName: RegionOne
+                EOF
+                chgrp docker /etc/rexray/config.yml
+                rexray start
+              params:
+                dummy: ""                
+  docker_secgroup:
+     type: OS::Neutron::SecurityGroup
+     properties:
+       rules:
+          - protocol: icmp
+            remote_ip_prefix: 0.0.0.0/0
+          - protocol: tcp
+            remote_ip_prefix: 0.0.0.0/0
+            port_range_min: 22
+            port_range_max: 22
+          - protocol: tcp
+            remote_ip_prefix: 0.0.0.0/0
+            port_range_min: 80
+            port_range_max: 80
+  docker_network:
+    type: OS::Neutron::Net
+    properties:
+      name: docker_net
+  docker_subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      network: {get_resource: docker_network}
+      cidr: 192.168.42.0/24
+      dns_nameservers: [ "8.8.8.8", "8.8.4.4" ]
+      ip_version: 4
+  docker_router:
+     type: OS::Neutron::Router
+     properties:
+       external_gateway_info: { network: public }
+  docker_router_interface:
+     type: OS::Neutron::RouterInterface
+     properties:
+       router_id: { get_resource: docker_router }
+       subnet: { get_resource: docker_subnet }

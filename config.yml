@@ -1,0 +1,12 @@
+rexray:
+  storageDrivers:
+  - openstack
+volume:
+  mount:
+    preempt: true
+openstack:
+  authUrl: http://172.24.4.1:35357/v2.0
+  username: admin
+  password: foopassword
+  tenantName: alt_demo
+  regionName: RegionOne

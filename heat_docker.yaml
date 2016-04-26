@@ -44,7 +44,7 @@ resources:
                     - openstack
                   volume:
                     mount:
-                      prempt: true
+                      preempt: true
                 openstack:
                   authUrl: http://172.24.4.1:35357/v2.0
                   username: admin
