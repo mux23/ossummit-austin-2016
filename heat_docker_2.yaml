@@ -49,6 +49,7 @@ resources:
                 EOF
                 chgrp docker /etc/rexray/config.yml
                 rexray start
+                echo "127.0.0.1 localhost docker-one" > /etc/hosts
               params:
                 dummy: ""
   docker-two:
@@ -86,6 +87,7 @@ resources:
                 EOF
                 chgrp docker /etc/rexray/config.yml
                 rexray start
+                echo "127.0.0.1 localhost docker-two" > /etc/hosts
               params:
                 dummy: ""                
   docker_secgroup:
